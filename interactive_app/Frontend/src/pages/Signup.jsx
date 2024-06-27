@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 export const Signup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ export const Signup = () => {
           />
           <InputBox
             onChange={(e) => {
-              setUsername(e.target.value);
+              setEmail(e.target.value);
             }}
             placeholder="shubhdeep@gmail.com"
             label={"Email"}
@@ -52,7 +52,7 @@ export const Signup = () => {
             <Button
               onClick={async () => {
                 const response = await axios.post(
-                  "http://localhost:5173/signup",
+                  "http://localhost:3000/signup",
                   {
                     username,
                     firstName,
@@ -61,7 +61,7 @@ export const Signup = () => {
                   }
                 );
                 localStorage.setItem("token", response.data.token);
-                navigate("/dashboard");
+                navigate("/Home");
               }}
               label={"Sign up"}
             />
