@@ -12,6 +12,7 @@ export const Signup = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   return (
@@ -41,6 +42,11 @@ export const Signup = () => {
             placeholder="shubhdeep@gmail.com"
             label={"Email"}
           />
+          {errorMessage && (
+            <div className="text-red-500 text-sm mt-2 text-left">
+              {errorMessage}
+            </div>
+          )}
           <InputBox
             onChange={(e) => {
               setPassword(e.target.value);
@@ -51,17 +57,25 @@ export const Signup = () => {
           <div className="pt-4">
             <Button
               onClick={async () => {
-                const response = await axios.post(
-                  "http://localhost:3000/signup",
-                  {
-                    username,
-                    firstName,
-                    lastName,
-                    password,
+                try {
+                  const response = await axios.post(
+                    "http://localhost:5000/api/signup",
+                    {
+                      firstName,
+                      lastName,
+                      email,
+                      password,
+                    }
+                  );
+                  localStorage.setItem("token", response.data.token);
+                  navigate("/Home");
+                } catch (error) {
+                  if (error.response && error.response.status === 400) {
+                    setErrorMessage("Email already in use");
+                  } else {
+                    setErrorMessage("Something went wrong. Please try again.");
                   }
-                );
-                localStorage.setItem("token", response.data.token);
-                navigate("/Home");
+                }
               }}
               label={"Sign up"}
             />
