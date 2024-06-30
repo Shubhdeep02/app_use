@@ -6,6 +6,19 @@ import { InputBox } from "../components/Common/InputBox";
 import { SubHeading } from "../components/Common/SubHeading";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+
+const emailSchema = z.string().max(50, "Email must be less than 50 characters").regex(/^[A-Za-z0-9._%+-]+@gmail\.com$/, "Email must be a valid address");
+
+const validateEmail = (email) => {
+  try {
+    emailSchema.parse(email);
+    return email
+} catch (e) {
+    setErrorMessage(e.errors[0].message);
+      return false;
+  }
+};
 
 export const Signin = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +33,10 @@ export const Signin = () => {
           <Heading label={"Sign in"} />
           <SubHeading label={"Enter your credentials to access your account"} />
           <InputBox
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { 
+              setEmail(e.target.value);
+              setErrorMessage("");
+              }}
             placeholder="shubhdeep@gmail.com"
             label={"Email"}
           />
@@ -37,6 +53,7 @@ export const Signin = () => {
           <div className="pt-4">
             <Button
               onClick={async () => {
+                if (!validateEmail(email)) return;
                 try {
                   const response = await axios.post(
                     "http://localhost:5000/api/signin",
