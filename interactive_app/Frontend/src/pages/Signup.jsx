@@ -6,6 +6,19 @@ import { InputBox } from "../components/Common/InputBox";
 import { SubHeading } from "../components/Common/SubHeading";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+
+const emailSchema = z.string().max(50, "Email must be less than 50 characters").regex(/^[A-Za-z0-9._%+-]+@gmail\.com$/, "Email must be a valid address");
+
+const validateEmail = (email) => {
+  try {
+    emailSchema.parse(email);
+    return email
+} catch (e) {
+    setErrorMessage(e.errors[0].message);
+      return false;
+  }
+};
 
 export const Signup = () => {
   const [firstName, setFirstName] = useState("");
@@ -38,6 +51,7 @@ export const Signup = () => {
           <InputBox
             onChange={(e) => {
               setEmail(e.target.value);
+              setErrorMessage("");
             }}
             placeholder="shubhdeep@gmail.com"
             label={"Email"}
@@ -57,6 +71,7 @@ export const Signup = () => {
           <div className="pt-4">
             <Button
               onClick={async () => {
+                if (!validateEmail(email)) return;
                 try {
                   const response = await axios.post(
                     "http://localhost:5000/api/signup",
